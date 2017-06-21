@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.Severity;
 
+
 public class SignalsTest extends Test{
 
 	private List<Way> waysWithLanes;
@@ -24,8 +25,8 @@ public class SignalsTest extends Test{
 		
 		super("Traffic Signals Validation");
 		// TODO Auto-generated constructor stub
-		this.waysWithLanes = new ArrayList<Way>();
-		this.junctions = new ArrayList<Node>();
+		this.waysWithLanes = new ArrayList<>();
+		this.junctions = new ArrayList<>();
 	}
 	
     @Override
@@ -45,7 +46,7 @@ public class SignalsTest extends Test{
     }
     
     static boolean isJunction(Node n){
-    	return (n.getParentWays().size() > 2) ? true : false;
+    	return n.getParentWays().size() > 2;
     }
 
     @Override
@@ -82,7 +83,7 @@ public class SignalsTest extends Test{
 		for (Node junction : junctions){
 			String msg = "Junctions found in Endtest\n";
 			System.out.println(msg);
-			TestError error = TestError.builder(this, Severity.ERROR, 8888).message(msg).primitives(junction).highlight(junction).build();
+			TestError error = TestError.builder(this, Severity.WARNING, 8888).message(msg).primitives(junction).highlight(junction).build();
 			errors.add(error);
 		}
 		
