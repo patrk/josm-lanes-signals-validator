@@ -50,7 +50,6 @@ public class LanesTest extends Test {
         final boolean tlf = tagsLanes.containsKey("turn:lanes:forward");
         final boolean tlb = tagsLanes.containsKey("turn:lanes:backward");
         final boolean tl2 = tagsLanes.containsKey("turn:lanes:both_ways");
-
         if (tl || tlf || tlb || tl2) {
             for (String tld : this.turnLanesList) { // Todo Ich musste das in tld umbenennen, Overshadow ist ein Fehler in Java
                 if (tagsLanes.containsKey(tld)) {
@@ -110,6 +109,40 @@ public class LanesTest extends Test {
                 }
             }
         }
+
+        // Der Code nach Check Access Lanes, was uebersprungen wurde
+
+        final Set<String> stars = new HashSet<>(); // Nutze sofort set statt list
+        for (String tag : tagsLanes.keySet()) {
+            if (tag.contains(":lanes")) {
+                final String[] split = tag.split(":");
+                final String star = split[0];
+                if (star.equals("source")) continue;
+                if (star.equals("proposed")) continue;
+                if (star.equals("construction")) continue;
+                if (star.equals("note")) continue;
+                stars.add(star);
+            }
+        }
+
+        for (String star : stars) {
+            boolean l = tagsLanes.containsKey(star + "");
+            boolean lf = tagsLanes.containsKey(star + ":forward");
+            boolean lb = tagsLanes.containsKey(star + ":backward");
+            boolean l2 = tagsLanes.containsKey(star + ":both_ways");
+            if (l && (lf || lb || l2)) {
+                final Map<String, Integer> temporaryMap = new HashMap<>();
+                temporaryMap.put("class", 31603);
+                temporaryMap.put("subclass", 0);
+                // TODO add this text stuff
+                err.add(temporaryMap);
+            }
+        }
+
+        if (!err.isEmpty()) {
+            //TODO return err ???
+        }
+
     }
 
     private int index_(String l, String e) {
