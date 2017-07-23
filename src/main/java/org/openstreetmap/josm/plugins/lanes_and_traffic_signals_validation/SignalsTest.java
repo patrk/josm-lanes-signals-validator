@@ -28,22 +28,22 @@ public class SignalsTest extends Test{
 	private List<Node> junctions;
 	public SignalsTest() {
 		
-		super("Traffic Signals Validation");
+		super("pmikul: Traffic Signals");
 		// TODO Auto-generated constructor stub
 		this.waysWithLanes = new ArrayList<>();
 		this.junctions = new ArrayList<>();
 	}
 	
-    @Override
-    public void visit(Way w) {
-       
-    	if (w.isUsable()) {
-            if (w.hasKey("lanes")){
-            	this.waysWithLanes.add(w);
-            	//System.out.println("visitor found lane\n");
-            }
-        }
-    }
+//    @Override
+//    public void visit(Way w) {
+//
+//    	if (w.isUsable()) {
+//            if (w.hasKey("lanes")){
+//            	this.waysWithLanes.add(w);
+//            	//System.out.println("visitor found lane\n");
+//            }
+//        }
+//    }
     
     
     static int getLanesCount(String value) {
@@ -54,7 +54,7 @@ public class SignalsTest extends Test{
     	return n.getParentWays().size() > 2;
     }
 
-    static int getNodeIdxAlongWay(Way w, Node n){
+    private static int getNodeIdxAlongWay(Way w, Node n){
     	if (n.getParentWays().contains(w)){
 			int nodesCount = w.getNodesCount();
 			for (int i = 0; i < nodesCount; i++){
@@ -94,6 +94,25 @@ public class SignalsTest extends Test{
 			}
 		}
 		return false;
+	}
+
+	private void checkPedestrianCrossingWithoutIntersection(Node n){
+		if(!(n.hasTag("crossing", "traffic_signals"))){
+			return;
+		}
+
+	}
+
+	private void checkSimpleIntersection(Node n){
+		return;
+	}
+
+	private void checkTrafficSignalWithoutIntersection(Node n){
+		if(n.hasTag("oneway", "yes")){
+			//check traffic_signals:direction=forward/backward
+		}
+		return;
+
 	}
 
     @Override
