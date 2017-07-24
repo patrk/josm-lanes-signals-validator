@@ -18,6 +18,7 @@ apply plugin: "eclipse"
 // For the dependencies of our project (not of this build script itself), we also need the
 // local Maven cache. We use it to get the MATSim snapshot.
 repositories {
+    mavenCentral()
 }
 
 // Declare a configuration for our external dependency (MATSim) so we can later take its classes and zip them into our jar.
@@ -41,6 +42,12 @@ sourceSets {
     main {
         output.resourcesDir = "build/classes/main"
     }
+    test{
+        java {
+            srcDir "src/test/java/LibraryTest"
+        }
+    }
+
 }
 
 jar.baseName = "lanes-signals-validator"

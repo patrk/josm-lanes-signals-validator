@@ -13,31 +13,36 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class TurnLanes extends Test.TagTest{
 
+    // Ordering relation for directions
+    final static List<String> listTurns = new ArrayList<String>(){{
+        add("reverse");
+        add("sharp_left");
+        add("left");
+        add("slight_left");
+        add("sharp_left");
+        add("merge_to_right");
+        add("through");
+        add("merge_to_left");
+        add("slight_right");
+        add("right");
+        add("sharp_right");
+    }};
+    // Turn lanes with no turning indication
+    final static List<String> noneTurns = new ArrayList<String>(){{
+        add("none");
+        add("");
+    }};
+
     public TurnLanes() {
         super(tr("pmikul: Turn lanes"), tr("Test that validates ''turn:lane:'' tags."));
     }
 
+    static int getLanesCount(String value) {
+        return value.isEmpty() ? 0 : value.replaceAll("[^|]", "").length() + 1;
+    }
+
     // Implementation of an ordering relation for sorting purpose
     private static int compareDirection(String s1, String s2){
-        // Ordering relation for directions
-        final List<String> listTurns = new ArrayList<String>(){{
-            add("reverse");
-            add("sharp_left");
-            add("left");
-            add("slight_left");
-            add("sharp_left");
-            add("merge_to_right");
-            add("through");
-            add("merge_to_left");
-            add("slight_right");
-            add("right");
-            add("sharp_right");
-        }};
-        // Turn lanes with no turning indication
-        final List<String> noneTurns = new ArrayList<String>(){{
-           add("none");
-           add("");
-        }};
         // Turn lanes with no turning indication will be ignored, since cycleways can be included in turn:lanes
         if(noneTurns.contains(s1) || noneTurns.contains(s2)) return 0;
 
@@ -70,6 +75,13 @@ public class TurnLanes extends Test.TagTest{
                     .primitives(p)
                     .build());
         }
+    }
+
+    private void checkTurnLanesCoherence(OsmPrimitive p, String lanesKey){
+        final String turnLanes = p.get(lanesKey);
+        if (turnLanes == null) return;
+        final int lanesCount = getLanesCount(turnLanes);
+
     }
 
     @Override
