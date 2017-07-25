@@ -23,6 +23,7 @@ import org.openstreetmap.josm.plugins.PluginInformation;
             OsmValidator.addTest(TurnLanes.class);
            // OsmValidator.addTest(Lanes.class);
             OsmValidator.addTest(TurnRestrictions.class);
+            OsmValidator.addTest(TurnLanesCoherence.class);
 		}
 		
 

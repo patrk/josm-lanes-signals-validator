@@ -45,11 +45,7 @@ public class SignalsTest extends Test{
 //        }
 //    }
     
-    
-    static int getLanesCount(String value) {
-        return value.isEmpty() ? 0 : value.replaceAll("[^|]", "").length() + 1;
-    }
-    
+
     static boolean isJunction(Node n){
     	return n.getParentWays().size() > 2;
     }

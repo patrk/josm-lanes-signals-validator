@@ -34,16 +34,15 @@ public class TurnLanes extends Test.TagTest{
     }};
 
     public TurnLanes() {
-        super(tr("pmikul: Turn lanes"), tr("Test that validates ''turn:lane:'' tags."));
+        super(tr("pmikul: Turn lanes"), tr("Test that validates ''turn:lanes:'' tags."));
     }
 
-    static int getLanesCount(String value) {
-        return value.isEmpty() ? 0 : value.replaceAll("[^|]", "").length() + 1;
-    }
+
 
     // Implementation of an ordering relation for sorting purpose
     private static int compareDirection(String s1, String s2){
-        // Turn lanes with no turning indication will be ignored, since cycleways can be included in turn:lanes
+
+       // Turn lanes with no turning indication will be ignored, since cycleways can be included in turn:lanes
         if(noneTurns.contains(s1) || noneTurns.contains(s2)) return 0;
 
         if(listTurns.indexOf(s1) > listTurns.indexOf(s2)) return 1;
@@ -60,10 +59,7 @@ public class TurnLanes extends Test.TagTest{
 
         sortedTurns.sort((s1, s2) -> compareDirection(s1, s2));
         // Ordering of original turn direction is assumed to be correct if it is equal to the sorted list
-        if (sortedTurns.equals(originalTurns)) return true;
-        else {
-            return false;
-        }
+        return (sortedTurns.equals(originalTurns));
     }
 
     private void checkTurnLanesOrdering(OsmPrimitive p, String lanesKey){
@@ -75,13 +71,6 @@ public class TurnLanes extends Test.TagTest{
                     .primitives(p)
                     .build());
         }
-    }
-
-    private void checkTurnLanesCoherence(OsmPrimitive p, String lanesKey){
-        final String turnLanes = p.get(lanesKey);
-        if (turnLanes == null) return;
-        final int lanesCount = getLanesCount(turnLanes);
-
     }
 
     @Override
