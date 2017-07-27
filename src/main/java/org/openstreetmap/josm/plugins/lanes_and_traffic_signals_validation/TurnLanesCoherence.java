@@ -62,7 +62,7 @@ public class TurnLanesCoherence extends Test{
                 Set<String> originalTurns = new HashSet<>(Arrays.asList(turnLanes.split("\\W", -1)));
                 if(diffLanesCount > 0){
                     Set<String> originalTurnsSubstracting = new HashSet<>(originalTurns);
-                    final boolean b = originalTurnsSubstracting.retainAll(substractringTurns);
+                    originalTurnsSubstracting.retainAll(substractringTurns);
                     if((diffLanesCount != originalTurnsSubstracting.size())) {
                         errors.add(TestError.builder(this, Severity.WARNING, 8002)
                                 .message("Preceeded by too few turn or merge lanes")

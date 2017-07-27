@@ -21,7 +21,11 @@ public class TurnLanes extends Test.TagTest{
         add("slight_left");
         add("sharp_left");
         add("merge_to_right");
+        add("left;through");
+        add("slight_left;through");
         add("through");
+        add("through;right");
+        add("through;slight_right");
         add("merge_to_left");
         add("slight_right");
         add("right");
@@ -65,6 +69,10 @@ public class TurnLanes extends Test.TagTest{
     private void checkTurnLanesOrdering(OsmPrimitive p, String lanesKey){
         final String turnLanes = p.get(lanesKey);
         if (turnLanes == null) return;
+        errors.add(TestError.builder(this, Severity.OTHER, 9999)
+                .message("turn:lanes found")
+                .primitives(p)
+                .build());
         if (!(evaluateTurnLanes(turnLanes))){
             errors.add(TestError.builder(this, Severity.WARNING, 8001)
                     .message("turn:lanes are not in left-to-right ordering")

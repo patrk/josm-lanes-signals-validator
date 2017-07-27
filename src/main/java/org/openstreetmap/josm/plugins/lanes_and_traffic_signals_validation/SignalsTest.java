@@ -1,51 +1,54 @@
 package org.openstreetmap.josm.plugins.lanes_and_traffic_signals_validation;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.Collections;
 
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.Severity;
-
-import org.openstreetmap.josm.tools.Pair;
 
 
 
 public class SignalsTest extends Test{
 
-	private List<Way> waysWithLanes;
+	final static List<String> pedestrianWays = new ArrayList<String>(){{
+		add("footway");
+		add("bridleway");
+		add("steps");
+		add("path");
+		add("pedestrian");
+	}};
+
+	final static List<String> motorizedWays = new ArrayList<String>(){{
+		add("motorway");
+		add("trunk");
+		add("primary");
+		add("secondary");
+		add("tertiary");
+		add("residential");
+		add("service");
+		add("motorway_link");
+		add("trunk_link");
+		add("primary_link");
+		add("secondary_link");
+		add("tertiary_link");
+		add("living_street");
+		add("road");
+	}};
+
 	private List<Node> junctions;
 	public SignalsTest() {
 		
 		super("pmikul: Traffic Signals");
-		// TODO Auto-generated constructor stub
-		this.waysWithLanes = new ArrayList<>();
 		this.junctions = new ArrayList<>();
 	}
-	
-//    @Override
-//    public void visit(Way w) {
-//
-//    	if (w.isUsable()) {
-//            if (w.hasKey("lanes")){
-//            	this.waysWithLanes.add(w);
-//            	//System.out.println("visitor found lane\n");
-//            }
-//        }
-//    }
-    
-
     static boolean isJunction(Node n){
     	return n.getParentWays().size() > 2;
     }
@@ -66,97 +69,71 @@ public class SignalsTest extends Test{
 		return p -> p.hasTag("highway", "traffic_signals");
 	}
 
-	private static boolean preceededByTrafficSignal(Way w, Node n){
-		int nIdx = getNodeIdxAlongWay(w, n);
-		int end;
-		if (w.isOneway() > -1) {
-			end = 0;
+	private void checkPedestrianCrossingWithoutIntersection(Node n){
+		if(!(n.hasTag("highway","crossing"))) return;
+		// Consider only nodes which mark a pedestrian crossing
+		if(!(n.hasTag("crossing", "traffic_signals")) && crossesLargeRoad(n)){
+			errors.add(TestError.builder(this, Severity.WARNING, 7001)
+					.message("found pedestrian crossing and lanes > 2 without pedestrian signals")
+					.primitives(n)
+					.build());
+			return;
 		}
-		else{
-			end = w.getNodesCount();
+		if((n.hasTag("crossing", "traffic_signals")) && !(isPrecededbyTrafficSignals(n)) && !n.hasTag("highway", "traffic_signals")) {
+			errors.add(TestError.builder(this, Severity.WARNING, 7002)
+					.message("found pedestrian traffic signal but no traffic signals for motorized traffic")
+					.primitives(n)
+					.build());
 		}
-		for (int i = nIdx; i > end;){
-			if (w.isOneway() > -1){
-				i--;
+
+
+	}
+
+	private static boolean isPrecededbyTrafficSignals(Node n){
+		List<Way> parentWays = n.getParentWays();
+
+		for(Way parentWay : parentWays) {
+			if(!(parentWay.hasKey("highway")) && pedestrianWays.contains(parentWay.get("highway"))) continue;
+			int nIdx = getNodeIdxAlongWay(parentWay, n);
+			int end;
+			if (parentWay.isOneway() > -1) {
+				end = 0;
+			} else {
+				end = parentWay.getNodesCount();
 			}
-			else{
-				i++;
+			for (int i = nIdx; i > end; ) {
+				if (parentWay.isOneway() > -1) {
+					i--;
+				} else {
+					i++;
+				}
+				if (parentWay.getNode(i).hasTag("highway", "traffic_signals")) {
+					return true;
+				}
 			}
-			if (w.getNode(i).hasTag("highway", "traffic_signals")){
+		}
+	return false;
+	}
+
+	private static boolean crossesLargeRoad(Node n){
+		// crossing has no traffic signal check lane count of involved motorized way
+		boolean crosses = false;
+		List<Way> parentWays = n.getParentWays();
+		//List<Way> parentHighways = parentWays.stream().filter(p -> p.hasKey("highway").collect(Collectors.toList()));
+		for(Way pw : parentWays){
+			if(!(pw.hasKey("highway"))) continue;
+			if(!(pw.hasKey("lanes"))) continue;
+			if(Integer.parseInt(pw.get("lanes")) > 2) {
 				return true;
-			}
-			if (SignalsTest.isJunction(w.getNode(i))){
-				return false;
 			}
 		}
 		return false;
 	}
 
-	private void checkPedestrianCrossingWithoutIntersection(Node n){
-		if(!(n.hasTag("crossing", "traffic_signals"))){
-			return;
-		}
+	private void checkSimpleIntersection(Node n){	}
 
+	@Override
+	public void visit(Node n){
+		checkPedestrianCrossingWithoutIntersection(n);
 	}
-
-	private void checkSimpleIntersection(Node n){
-		return;
-	}
-
-	private void checkTrafficSignalWithoutIntersection(Node n){
-		if(n.hasTag("oneway", "yes")){
-			//check traffic_signals:direction=forward/backward
-		}
-		return;
-
-	}
-
-    @Override
-    public void visit(Node n) {
-    	if(n.isUsable() && !n.isOutsideDownloadArea()) {
-			if (n.hasTag("crossing", "traffic_signals") && !n.hasTag("highway", "traffic_signals")) {
-				boolean ok = false;
-
-
-				List<Way> parentWays = n.getParentWays();
-				for (Way w : parentWays) {
-
-					if (w.hasTag("highway", "primary") ||
-							w.hasTag("highway", "secondary") ||
-							w.hasTag("highway", "teriary")) {
-
-						if (SignalsTest.preceededByTrafficSignal(w, n)) {
-							ok = true;
-						}
-
-					}
-				}
-				if (!ok) {
-					this.junctions.add(n);
-				}
-			}
-		}
-    }
-
-    @Override
-	public void endTest() {
-
-//		for (Way way : waysWithLanes){
-//			String msg = "Lane found in Endtest\n";
-//			System.out.println(msg);
-//			TestError error = TestError.builder(this, Severity.ERROR, 9999).message(msg).primitives(way).highlight(way).build();
-//			errors.add(error);
-//		}
-		
-		for (Node junction : junctions){
-			String msg = "Pedestrian crossing but no corresponding traffic signals found\n";
-			System.out.println(msg);
-			TestError error = TestError.builder(this, Severity.WARNING, 8888).message(msg).primitives(junction).highlight(junction).build();
-			errors.add(error);
-		}
-		
-		super.endTest();
-
-    }
-
 }
