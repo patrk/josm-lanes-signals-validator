@@ -8,7 +8,11 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -17,25 +21,25 @@ import static org.openstreetmap.josm.tools.I18n.tr;
  */
 public class TurnRestrictions extends Test {
 
-    final static List<String> rightTurns = new ArrayList<String>(){{
+    final static List<String> rightTurns = new ArrayList<>() {{
         add("slight_right");
         add("right");
         add("sharp_right");
     }};
 
-    final static List<String> leftTurns = new ArrayList<String>(){{
+    final static List<String> leftTurns = new ArrayList<>() {{
         add("sharp_left");
         add("left");
         add("slight_left");
         add("sharp_left");
     }};
 
-    final static List<String> rightRestrictions = new ArrayList<String>(){{
+    final static List<String> rightRestrictions = new ArrayList<>() {{
         add("no_right_turn");
         add("only_left_turn");
     }};
 
-    final static List<String> leftRestrictions = new ArrayList<String>(){{
+    final static List<String> leftRestrictions = new ArrayList<>() {{
         add("no_left_turn");
         add("only_right_turn");
     }};
@@ -58,7 +62,7 @@ public class TurnRestrictions extends Test {
             final List<String> fromWayAllTurns = getWayList(fromWay, "all");
 
             Set<OsmPrimitive> memberPrimitives = r.getMemberPrimitives();
-            if (restrictionValue == "no_u_turn" && fromWayAllTurns.contains("reverse")) {
+            if (restrictionValue.equals("no_u_turn") && fromWayAllTurns.contains("reverse")) {
                 buildError(9000, memberPrimitives);
             }
             if (leftRestrictions.contains(restrictionValue) && !Collections.disjoint(fromWayAllTurns, leftTurns)){
@@ -67,11 +71,11 @@ public class TurnRestrictions extends Test {
             if (rightRestrictions.contains(restrictionValue) && !Collections.disjoint(fromWayAllTurns, rightTurns)){
                 buildError(9002, memberPrimitives);
             }
-            if ((rightRestrictions.contains(restrictionValue) || leftRestrictions.contains(restrictionValue) || restrictionValue=="no_straight_on")
+            if ((rightRestrictions.contains(restrictionValue) || leftRestrictions.contains(restrictionValue) || restrictionValue.equals("no_straight_on"))
                     && fromWayAllTurns.contains("through")){
                 buildError(9003, memberPrimitives);
             }
-            if (restrictionValue=="only_straight_on" && !Collections.disjoint(fromWayAllTurns, rightTurns) && !Collections.disjoint(fromWayAllTurns, leftTurns)){
+            if (restrictionValue.equals("only_straight_on") && !Collections.disjoint(fromWayAllTurns, rightTurns) && !Collections.disjoint(fromWayAllTurns, leftTurns)){
                 buildError(9004, memberPrimitives);
             }
         }
@@ -114,13 +118,13 @@ public class TurnRestrictions extends Test {
     }
 
     private List<String> getWayList(Way w, String option){
-        if (option == "turns"){
+        if (option.equals("turns")){
             final String turns = w.get("turn:lanes");
             return Arrays.asList(turns.split("\\W"));
-        }else if (option == "forward"){
+        }else if (option.equals("forward")){
             final String forward = w.get("turn:lanes:forward");
             return Arrays.asList(forward.split("\\W"));
-        }else if (option == "backward"){
+        }else if (option.equals("backward")){
             final String backward = w.get("turn:lanes:backward");
             return Arrays.asList(backward.split("\\W"));
         } else {

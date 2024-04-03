@@ -1,20 +1,20 @@
 package org.openstreetmap.josm.plugins.lanes_and_traffic_signals_validation;
 
-/**
- * Created by Patryk on 22.07.2017.
- */
-
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class TurnLanes extends Test.TagTest{
 
     // Ordering relation for directions
-    final static List<String> listTurns = new ArrayList<String>(){{
+    final static List<String> listTurns = new ArrayList<>() {{
         add("reverse");
         add("sharp_left");
         add("left");
@@ -32,7 +32,7 @@ public class TurnLanes extends Test.TagTest{
         add("sharp_right");
     }};
     // Turn lanes with no turning indication
-    final static List<String> noneTurns = new ArrayList<String>(){{
+    final static List<String> noneTurns = new ArrayList<>() {{
         add("none");
         add("");
     }};
@@ -49,9 +49,7 @@ public class TurnLanes extends Test.TagTest{
        // Turn lanes with no turning indication will be ignored, since cycleways can be included in turn:lanes
         if(noneTurns.contains(s1) || noneTurns.contains(s2)) return 0;
 
-        if(listTurns.indexOf(s1) > listTurns.indexOf(s2)) return 1;
-        if(listTurns.indexOf(s1) < listTurns.indexOf(s2)) return -1;
-        return 0;
+        return Integer.compare(listTurns.indexOf(s1), listTurns.indexOf(s2));
     }
 
     private boolean evaluateTurnLanes(String turnLanes){
@@ -61,7 +59,7 @@ public class TurnLanes extends Test.TagTest{
         List<String> originalTurns = Arrays.asList(turnLanes.split("\\W", -1));
         List<String> sortedTurns = new ArrayList<>(originalTurns);
 
-        sortedTurns.sort((s1, s2) -> compareDirection(s1, s2));
+        sortedTurns.sort(TurnLanes::compareDirection);
         // Ordering of original turn direction is assumed to be correct if it is equal to the sorted list
         return (sortedTurns.equals(originalTurns));
     }

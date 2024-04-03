@@ -1,26 +1,25 @@
 package org.openstreetmap.josm.plugins.lanes_and_traffic_signals_validation;
 
-/**
- * Created by Patryk on 22.07.2017.
- */
-
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import java.util.*;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class TurnLanesCoherence extends Test{
 
-    final static Set<String> substractringTurns = new HashSet<String>(){{
+    final static Set<String> substractringTurns = new HashSet<>() {{
         add("reverse");
         add("sharp_left");
         add("left");
         add("slight_left");
-        add("sharp_left");
         add("merge_to_right");
         add("merge_to_left");
         add("slight_right");
@@ -28,7 +27,7 @@ public class TurnLanesCoherence extends Test{
         add("sharp_right");
     }};
 
-    final static Set<String> persistingLanes = new HashSet<String>(){{
+    final static Set<String> persistingLanes = new HashSet<>() {{
         add("none");
         add("");
         add("through");
@@ -54,7 +53,6 @@ public class TurnLanesCoherence extends Test{
             if(!parentWay.hasKey("highway")) return;
             if(!parentWay.lastNode().equals(firstNode)) return;
             final String parentTurnLanes = parentWay.get(lanesKey);
-            if (turnLanes == null) return;
             int parentLanesCount = getLanesCount(parentTurnLanes);
             if (parentLanesCount != lanesCount){
                 int diffLanesCount = parentLanesCount - lanesCount;

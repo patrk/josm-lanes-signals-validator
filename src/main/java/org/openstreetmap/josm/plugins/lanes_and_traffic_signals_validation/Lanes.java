@@ -1,16 +1,11 @@
 package org.openstreetmap.josm.plugins.lanes_and_traffic_signals_validation;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-//  import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.tools.Utils;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Test that validates {@code lane:} tags.

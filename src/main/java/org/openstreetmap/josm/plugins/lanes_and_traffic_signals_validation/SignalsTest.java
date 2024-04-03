@@ -1,47 +1,43 @@
 package org.openstreetmap.josm.plugins.lanes_and_traffic_signals_validation;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.Collections;
-
-
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.data.validation.Severity;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 
 
 public class SignalsTest extends Test{
 
-	final static List<String> pedestrianWays = new ArrayList<String>(){{
-		add("footway");
-		add("bridleway");
-		add("steps");
-		add("path");
-		add("pedestrian");
-	}};
+	final static List<String> pedestrianWays = new ArrayList<>() {{
+        add("footway");
+        add("bridleway");
+        add("steps");
+        add("path");
+        add("pedestrian");
+    }};
 
-	final static List<String> motorizedWays = new ArrayList<String>(){{
-		add("motorway");
-		add("trunk");
-		add("primary");
-		add("secondary");
-		add("tertiary");
-		add("residential");
-		add("service");
-		add("motorway_link");
-		add("trunk_link");
-		add("primary_link");
-		add("secondary_link");
-		add("tertiary_link");
-		add("living_street");
-		add("road");
-	}};
+	final static List<String> motorizedWays = new ArrayList<>() {{
+        add("motorway");
+        add("trunk");
+        add("primary");
+        add("secondary");
+        add("tertiary");
+        add("residential");
+        add("service");
+        add("motorway_link");
+        add("trunk_link");
+        add("primary_link");
+        add("secondary_link");
+        add("tertiary_link");
+        add("living_street");
+        add("road");
+    }};
 
 	private List<Node> junctions;
 	public SignalsTest() {
