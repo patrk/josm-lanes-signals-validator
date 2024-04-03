@@ -1,0 +1,21 @@
+{
+  "name": "josm-lanes-signals-validator",
+  "version": "0.0.0-semantically-released",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/patrk/josm-lanes-signals-validator.git"
+  },
+  "private": true,
+  "devDependencies": {
+    "semantic-release": "^17.0.0",
+    "@semantic-release/commit-analyzer": "^8.0.0",
+    "@semantic-release/release-notes-generator": "^9.0.0",
+    "@semantic-release/github": "^7.0.0"
+  }
+}
