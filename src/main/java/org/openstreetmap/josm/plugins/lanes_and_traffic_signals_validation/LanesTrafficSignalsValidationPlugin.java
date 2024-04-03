@@ -19,9 +19,8 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 		     // init your plugin 
 		     MainMenu menu = Main.main.menu;
 		     
-            //OsmValidator.addTest(SignalsTest.class);
+            OsmValidator.addTest(SignalsTest.class);
             OsmValidator.addTest(TurnLanes.class);
-           // OsmValidator.addTest(Lanes.class);
             OsmValidator.addTest(TurnRestrictions.class);
             OsmValidator.addTest(TurnLanesCoherence.class);
 		}
